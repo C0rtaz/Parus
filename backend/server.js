@@ -94,4 +94,48 @@ app.post('/auth', (req, res) => {
     
     
   }); 
+  app.get('/news/get',(req, res) => {
+    const query = 'SELECT * FROM web.news';
+    connection.query(query, function (error, results, fields){
+      if (error) {
+        res.send({ express: error }); 
+        return;
+      }
+      res.status(200).json({ results });
+    });
+  });
+
+  app.get('/news/add',(req, res) => {
+    const data = req.body;
+    const query = 'INSERT INTO web.news (title, descript, img) VALUES (?, ?, ?)';
+    connection.query(query, data, function (error, results, fields){
+      if (error) {
+        res.send({ express: error }); 
+        return;
+      }
+      res.status(200).json("success");
+    });
+  });
+  app.get('/services/get',(req, res) => {
+    const query = 'SELECT * FROM web.services';
+    connection.query(query, function (error, results, fields){
+      if (error) {
+        res.send({ express: error }); 
+        return;
+      }
+      res.status(200).json({ results });
+    });
+  });
+
+  app.get('/services/add',(req, res) => {
+    const data = req.body;
+    const query = 'INSERT INTO web.news (title, descript, img) VALUES (?, ?, ?)';
+    connection.query(query, data, function (error, results, fields){
+      if (error) {
+        res.send({ express: error }); 
+        return;
+      }
+      res.status(200).json("success");
+    });
+  });
   
