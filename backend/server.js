@@ -20,17 +20,44 @@ app.post('/auth', (req, res) => {
     const user = [login, password];
     //res.status(200).json({ message: user });
     connection.query('SELECT * FROM web.users where login = ? and password = ?', user, function (error, results, fields) {
-
             if (error) {
                 res.send({ express: error }); 
                 return;
             }
-            res.status(200).json({ message: results, status: "returned from query result" });
-            
+            res.status(200).json({ message: results, status: "returned from query result" }); 
         });
-    
-    
   }); 
+app.post('/user/getStudent',(req, res) =>{
+  const userID = req.body.id;
+  connection.query('SELECT * FROM web.student WHERE userID = ?', userID, function (error, results, fields) {
+    if (error) {
+        res.send({ express: error }); 
+        return;
+    }
+    res.status(200).json({ results }); 
+});
+});
+app.post('/shedule/get',(req, res) =>{
+  const userID = req.body.id;
+  connection.query('SELECT sh.id, s.nameService, sh.serviceID, sh.timeStart, sh.timeEnd, sh.teacherName, st.id as studentID, st.name as studentName, st.surname as studentSurname, st.secsurname as studentSecsurname FROM web.services s JOIN web.servicesstudent ss ON s.id = ss.serviceID JOIN web.student st ON ss.studentID = st.id join web.schedule sh on sh.serviceID = s.id WHERE ss.isActive = 1 AND st.userID = ?', userID, function (error, results, fields) {
+    if (error) {
+        res.send({ express: error }); 
+        return;
+    }
+    res.status(200).json({ results }); 
+});
+});
+app.post('/shedule/user/get',(req, res) =>{
+  const data = [req.body.userID, req.body.serviceID];
+  connection.query('select s.*, ser.nameService from web.student s join web.users u on u.id = s.userID join web.servicesstudent ss on ss.studentID = s.id join web.schedule sh on sh.serviceID = ss.serviceID join web.services ser on ser.id = ss.serviceID where ss.isActive = 1 and u.id = ? and ser.id = ?', data, function (error, results, fields) {
+    if (error) {
+        res.send({ express: error }); 
+        return;
+    }
+    console.log(results);
+    res.status(200).json({ results }); 
+});
+});
 
   app.post('/addUser',(req, res) => { 
     const user = [
@@ -138,4 +165,13 @@ app.post('/auth', (req, res) => {
       res.status(200).json("success");
     });
   });
-  
+  app.get('/sheduleInfo/get',(req, res) => {
+    const query = 'SELECT * FROM web.schedule';
+    connection.query(query, function (error, results, fields){
+      if (error) {
+        res.send({ express: error }); 
+        return;
+      }
+      res.status(200).json({ results });
+    });
+  });
